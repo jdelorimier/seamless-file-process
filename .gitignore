@@ -1,0 +1,7 @@
+tests/**
+docs/**
+test*
+output/**
+.DS_Store
+*.log
+**/__pycache__/**
