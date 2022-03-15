@@ -3,7 +3,6 @@
 from sh_tesseract.ingestor import Ingestor
 from io import BytesIO
 import img2pdf
-import tempfile
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,7 +13,7 @@ class ImgIngestor(Ingestor):
         input_path = str(input_path)
         with open(output_path, "wb") as f:
             f.write(img2pdf.convert(input_path))
-        logger.info(f"converted {self.file_name} to pdf")
+        logger.info(f"converted {self.file_name} from image to pdf")
         return output_path
     
     def img_to_binary(self, input_path):

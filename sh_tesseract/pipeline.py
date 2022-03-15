@@ -1,14 +1,14 @@
+from threading import local
 from more_itertools import bucket
-from py import process
 from ingestors.pdf import PDFIngestor
 from ingestors.doc import DocIngestor
 from ingestors.img import ImgIngestor
+from ingestors.html import HtmlIngestor
 from ingestor import Ingestor
 from pathlib import Path
 import tempfile
 import boto3
 import os
-import PIL
 from urllib.parse import urlparse
 
 from sh_tesseract.ingestors.img import ImgIngestor
@@ -60,7 +60,10 @@ def process_path(doc, language):
         try:
             pdf = PDFIngestor(file)
             pdf.ocr(language=language)
-            text = pdf.textract_pdf(pdf.output_path)
+            if os.path.exists(pdf.output_path):
+                text = pdf.textract_pdf(pdf.output_path)
+            else:
+                text = None
         except Exception as e:
             logging.info(f"error ocring {file}")
             logging.error(e)
@@ -91,11 +94,14 @@ def process_path(doc, language):
             raise e
         text = pdf.textract_pdf(pdf.output_path)
     
+    elif doc.extension in ['.html']:
+        html = HtmlIngestor(file)
+        text = html.html_text(html.input_path)
+    
     else:
         logging.error(f"No Extension Found for {file}")
         text = None
     
-    # print text
     if text:
         txt_file_path = f"output/txt/{doc.prefix_path}/{doc.file_name}.txt"
         print(txt_file_path)
@@ -113,3 +119,14 @@ if __name__ == "__main__":
         format='%(asctime)s | %(name)s | %(levelname)s | %(message)s',
         filemode = "w+",
     )
+
+    for file in local_key_gen("/home/ubuntu/ocr/attachments"):
+        print(file)
+        doc = Ingestor(input_path = file)
+        if doc.extension and not os.path.exists(f"output/txt/{doc.prefix_path}/{doc.file_name}.txt"):
+            process_path(doc = Ingestor(input_path = file), language="rus")
+        else:
+            print(file)
+            pass
+
+

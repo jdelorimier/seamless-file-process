@@ -1,7 +1,6 @@
 
 from sh_tesseract.ingestor import Ingestor
 from subprocess import  Popen, check_output
-import os
 import docx2txt
 import textract
 import logging
@@ -10,7 +9,8 @@ logger = logging.getLogger(__name__)
 
 class DocIngestor(Ingestor):
 
-    LIBRE_OFFICE = r"/usr/local/bin/soffice"
+    # LIBRE_OFFICE = r"/usr/local/bin/soffice" MAC
+    LIBRE_OFFICE= "/usr/bin/soffice"
 
     def doc_to_pdf(self, input_doc_path, tmp_dir):
         """
@@ -46,7 +46,10 @@ class DocIngestor(Ingestor):
         brew install poppler antiword unrtf tesseract swig
         pip install textract
         """
-        text = textract.process(input_doc_path)
-        decoded = text.decode('utf-8') # utf-8 is default of above, but it is configurable
-        return decoded
-
+        try:
+            text = textract.process(str(input_doc_path))
+            text = text.decode('utf-8') # utf-8 is default of above, but it is configurable
+            return text
+        except Exception as e:
+            logging.error(f'docx extraction error for {input_doc_path}')
+            return None

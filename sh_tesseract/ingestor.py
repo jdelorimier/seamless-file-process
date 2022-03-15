@@ -1,5 +1,4 @@
 
-
 # we get an infile an input: a path
 # A file has certain attributes
 import os
@@ -22,7 +21,8 @@ class Ingestor(object):
         '''
         Example: /a/path/to/file.pdf
         '''
-        self.input_path = self.process_s3(input_path=input_path)
+        # self.input_path = self.process_s3(input_path=input_path)
+        self.input_path = input_path
         self.extension = self.get_extenstion(self.input_path) # .pdf
         self.stem = self.get_stem(self.input_path) # file
         self.prefix_path = self.get_prefix(self.input_path)[0] # a/path/to
@@ -31,6 +31,7 @@ class Ingestor(object):
 
     def get_extenstion(self, input_path):
         ext = os.path.splitext(input_path)[1]
+        ext = ext.lower()
         return ext
 
     def get_stem(self, input_path):
@@ -40,6 +41,7 @@ class Ingestor(object):
     
     def get_prefix(self, input_path):
         prefix_path, file_name =  os.path.split(input_path)
+        prefix_path = prefix_path
         return prefix_path, file_name
     
     def get_output_path(self, output_path):
@@ -72,7 +74,3 @@ class Ingestor(object):
         
         else:
             return input_path
-
-
-
-
