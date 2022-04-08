@@ -64,6 +64,7 @@ def process_path(doc, language):
                 text = pdf.textract_pdf(pdf.output_path)
             else:
                 text = None
+            output_path = pdf.output_path
         except Exception as e:
             logging.info(f"error ocring {file}")
             logging.error(e)
@@ -72,6 +73,7 @@ def process_path(doc, language):
     elif doc.extension in [".doc",".docx"]:
         docx = DocIngestor(file)
         text = docx.extract_text_textract(docx.input_path)
+        output_path = docx.input_path
     
     elif doc.extension in [".png", ".jpg", ".jpeg", ".tif"]:
         img = ImgIngestor(file)
@@ -88,6 +90,7 @@ def process_path(doc, language):
                 )
                 pdf.output_path = f"{img.output_path}.pdf"
                 pdf.ocr(language=language)
+                output_path = pdf.output_path
         except Exception as e:
             logging.info(f"error on {file}")
             logging.error(e)
@@ -97,19 +100,20 @@ def process_path(doc, language):
     elif doc.extension in ['.html']:
         html = HtmlIngestor(file)
         text = html.html_text(html.input_path)
+        output_path = html.input_path
     
     else:
         logging.error(f"No Extension Found for {file}")
         text = None
     
-    if text:
-        txt_file_path = f"output/txt/{doc.prefix_path}/{doc.file_name}.txt"
-        print(txt_file_path)
-        if not os.path.exists(f"output/txt/{doc.prefix_path}"):
-            os.makedirs(f"output/txt/{doc.prefix_path}")
-        with open(txt_file_path, 'w') as outfile:
-            outfile.write(text)
-        return text
+    # if text:
+    #     txt_file_path = f"output/txt/{doc.prefix_path}/{doc.file_name}.txt"
+    #     print(txt_file_path)
+    #     if not os.path.exists(f"output/txt/{doc.prefix_path}"):
+    #         os.makedirs(f"output/txt/{doc.prefix_path}")
+    #     with open(txt_file_path, 'w') as outfile:
+    #         outfile.write(text)
+    return text, output_path
 
 
 if __name__ == "__main__":

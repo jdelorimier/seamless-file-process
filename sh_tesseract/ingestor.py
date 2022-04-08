@@ -46,7 +46,7 @@ class Ingestor(object):
     
     def get_output_path(self, output_path):
         if output_path:
-            output_prefix = self.get_filepath(output_path)[1]
+            output_prefix = self.get_prefix(output_path)[1]
             output_path = output_path
         else:
             output_prefix=f"output/files/{self.prefix_path}"
